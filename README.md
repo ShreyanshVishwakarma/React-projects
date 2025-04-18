@@ -1,6 +1,7 @@
 # 📝 Todo App — Built with React & Tailwind
 
-Disclamer: This project is build in a single night
+"This entire app was built in a single night — just pure hustle & caffeine.
+Because becoming a 10x dev doesn't wait for tomorrow." 🚀
 
 A simple yet powerful Todo App that helps you manage your daily tasks efficiently.  
 It includes features like adding tasks, marking them complete, deleting tasks, and saving everything in localStorage so your tasks stay even after refreshing the page.
