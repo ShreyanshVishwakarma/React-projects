@@ -4,8 +4,7 @@ import { MdDeleteForever } from "react-icons/md";
 
 export default function Home() {
   const [addtask, setAddtask] = useState("");
-  const [task, setTask] = useState({id:1, text: "Learn React", completed: false});
-  const [completedtask, setCompletedtask] = useState(["Become awesome"]);
+  const [task, setTask] = useState([{id:1, text: "Learn React", completed: false}]);
 
   const addtaskHandler = (event) => {
     //add task ... update state of tasks
@@ -13,21 +12,29 @@ export default function Home() {
   }
 
   const handleClick = (e) => {
-    setTask([addtask,
+    const newTask = {
+      id: Date.now(),
+      text: addtask,
+      completed: false
+    };
+    setTask([newTask,
       ...task
     ]);
     setAddtask("");
   }
 
-  const handleDelete = (indexToDelete) => {
-    const updatedTasks = task.filter((_, index) => index !== indexToDelete);
+  const handleDelete = (id) => {
+    const updatedTasks = task.filter((item) => item.id !== id);
     setTask(updatedTasks);
   }
 
-  const handleChecked = (index)=>{
-    const taskToDelete = task[index];
-    setCompletedtask([...completedtask, taskToDelete]);
-    const updatedTasks = task.filter((_, i) => i !== index);
+  const handleChecked = (id)=>{
+    const updatedTasks = task.map((item) => {
+      if (item.id === id) {
+        return { ...item, completed: !item.completed };
+      }
+      return item;
+    });
     setTask(updatedTasks);
   }
 
@@ -53,13 +60,13 @@ export default function Home() {
       <hr />
       <div className="taskss flex flex-col justify-center items-center">
         {
-          task.map((tasks, index) => {
+          task.filter(task=>!task.completed).map((tasks) => {
             return (
-              <div key={index} className="flex justify-center items-center gap-2 p-3">
+              <div key={tasks.id} className="flex justify-center items-center gap-2 p-3">
                 <label className="flex justify-center items-center gap-2">
-                  <input className="font-bold size-5 " type="checkbox" onChange={() => handleChecked(index)}/>
-                  <h1 className="font-bold text-3xl">{tasks}</h1>
-                  <button className="p-2 rounded-2xl" onClick={() => handleDelete(index)}>
+                  <input className="font-bold size-5 " type="checkbox" onChange={() => handleChecked(tasks.id)}/>
+                  <h1 className="font-bold text-3xl">{tasks.text}</h1>
+                  <button className="p-2 rounded-2xl" onClick={() => handleDelete(tasks.id)}>
                     <MdDeleteForever className="text-red-500 size-11" />
                   </button>
                 </label>
@@ -72,9 +79,9 @@ export default function Home() {
       <hr />
       <div className="completed-tasks flex flex-col justify-center items-center mt-4">
         <h2 className="text-2xl font-bold mb-2">Completed Tasks</h2>
-        {completedtask.map((completedTask, index) => (
-          <div key={index} className="flex justify-center items-center gap-2 p-2">
-            <h1 className="font-bold text-xl line-through text-gray-500">{completedTask}</h1>
+        {task.filter(task=>task.completed).map((completedTask) => (
+          <div key={completedTask.id} className="flex justify-center items-center gap-2 p-2">
+            <h1 className="font-bold text-xl line-through text-gray-500">{completedTask.text}</h1>
           </div>
         ))}
       </div>
