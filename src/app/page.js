@@ -1,10 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdDeleteForever } from "react-icons/md";
 
 export default function Home() {
   const [addtask, setAddtask] = useState("");
-  const [task, setTask] = useState([{id:1, text: "Learn React", completed: false}]);
+  const [task, setTask] = useState([{ id: 1, text: "Learn React", completed: false }]);
+
+  useEffect(() => {
+    const storedTasks = localStorage.getItem("tasks");
+    if (storedTasks) {
+      setTask(JSON.parse(storedTasks));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(task));
+  }, [task]);
 
   const addtaskHandler = (event) => {
     //add task ... update state of tasks
@@ -28,7 +39,7 @@ export default function Home() {
     setTask(updatedTasks);
   }
 
-  const handleChecked = (id)=>{
+  const handleChecked = (id) => {
     const updatedTasks = task.map((item) => {
       if (item.id === id) {
         return { ...item, completed: !item.completed };
@@ -37,6 +48,9 @@ export default function Home() {
     });
     setTask(updatedTasks);
   }
+  const clearCompleted = () => {
+    setTask(task.filter(task => !task.completed));
+  };
 
   return (
     <>
@@ -60,11 +74,11 @@ export default function Home() {
       <hr />
       <div className="taskss flex flex-col justify-center items-center">
         {
-          task.filter(task=>!task.completed).map((tasks) => {
+          task.filter(task => !task.completed).map((tasks) => {
             return (
               <div key={tasks.id} className="flex justify-center items-center gap-2 p-3">
                 <label className="flex justify-center items-center gap-2">
-                  <input className="font-bold size-5 " type="checkbox" onChange={() => handleChecked(tasks.id)}/>
+                  <input className="font-bold size-5 " type="checkbox" onChange={() => handleChecked(tasks.id)} />
                   <h1 className="font-bold text-3xl">{tasks.text}</h1>
                   <button className="p-2 rounded-2xl" onClick={() => handleDelete(tasks.id)}>
                     <MdDeleteForever className="text-red-500 size-11" />
@@ -79,7 +93,11 @@ export default function Home() {
       <hr />
       <div className="completed-tasks flex flex-col justify-center items-center mt-4">
         <h2 className="text-2xl font-bold mb-2">Completed Tasks</h2>
-        {task.filter(task=>task.completed).map((completedTask) => (
+        <button onClick={clearCompleted} className="bg-red-500 text-white px-4 py-2 rounded-xl">
+          Clear Completed
+        </button>
+
+        {task.filter(task => task.completed).map((completedTask) => (
           <div key={completedTask.id} className="flex justify-center items-center gap-2 p-2">
             <h1 className="font-bold text-xl line-through text-gray-500">{completedTask.text}</h1>
           </div>
